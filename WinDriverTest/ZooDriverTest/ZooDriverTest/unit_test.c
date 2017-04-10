@@ -1,21 +1,58 @@
 #include "stdafx.h"
 #include "unit_test.h"
 
-typedef struct _ZOO_UT_FRAME
-{
-	ULONG expect;			//	预期函数返回结果
-	ULONG argc;				//	参数个数，目前最大支持20个，最少支持无参数
-	PVOID func;				//	要测试的函数
-	PVOID *pParamArray;		//	函数参数数组，每个元素是个LPVOID，用来给函数传参
-	PCHAR strFunName;		//	函数名字，或者叫做函数的唯一标识，这个可以空，但是空了就无法在log里面分辨函数了
-}ZOO_UT_FRAME;
+extern ZOO_UT_FRAME g_ZooUtFrame[];
+extern ULONG g_ulCount;
 
-ZOO_UT_FRAME g_ZooUtFrame[] = 
+
+static ULONG _UT_TestCall0(PVOID func, PVOID *pParamArray);
+static ULONG _UT_TestCall1(PVOID func, PVOID *pParamArray);
+static ULONG _UT_TestCall2(PVOID func, PVOID *pParamArray);
+static ULONG _UT_TestCall3(PVOID func, PVOID *pParamArray);
+static ULONG _UT_TestCall4(PVOID func, PVOID *pParamArray);
+static ULONG _UT_TestCall5(PVOID func, PVOID *pParamArray);
+static ULONG _UT_TestCall6(PVOID func, PVOID *pParamArray);
+static ULONG _UT_TestCall7(PVOID func, PVOID *pParamArray);
+static ULONG _UT_TestCall8(PVOID func, PVOID *pParamArray);
+static ULONG _UT_TestCall9(PVOID func, PVOID *pParamArray);
+static ULONG _UT_TestCall10(PVOID func, PVOID *pParamArray);
+static ULONG _UT_TestCall11(PVOID func, PVOID *pParamArray);
+static ULONG _UT_TestCall12(PVOID func, PVOID *pParamArray);
+static ULONG _UT_TestCall13(PVOID func, PVOID *pParamArray);
+static ULONG _UT_TestCall14(PVOID func, PVOID *pParamArray);
+static ULONG _UT_TestCall15(PVOID func, PVOID *pParamArray);
+static ULONG _UT_TestCall16(PVOID func, PVOID *pParamArray);
+static ULONG _UT_TestCall17(PVOID func, PVOID *pParamArray);
+static ULONG _UT_TestCall18(PVOID func, PVOID *pParamArray);
+static ULONG _UT_TestCall19(PVOID func, PVOID *pParamArray);
+static ULONG _UT_TestCall20(PVOID func, PVOID *pParamArray);
+
+typedef ULONG (*_UT_TestCall_Array)(PVOID func, PVOID *pParamArray);
+static _UT_TestCall_Array g_UtCallArray[21] = 
 {
-	{STATUS_SUCCESS, 0, UT_Init, NULL, "ZooTest"}
+	_UT_TestCall0,
+	_UT_TestCall1,
+	_UT_TestCall2,
+	_UT_TestCall3,
+	_UT_TestCall4,
+	_UT_TestCall5,
+	_UT_TestCall6,
+	_UT_TestCall7,
+	_UT_TestCall8,
+	_UT_TestCall9,
+	_UT_TestCall10,
+	_UT_TestCall11,
+	_UT_TestCall12,
+	_UT_TestCall13,
+	_UT_TestCall14,
+	_UT_TestCall15,
+	_UT_TestCall16,
+	_UT_TestCall17,
+	_UT_TestCall18,
+	_UT_TestCall19,
+	_UT_TestCall20
 };
 
-static ULONG _UT_TestCall0(PVOID func);
 
 //	判断参数列表是否异常
 static void _UT_TestParam(ZOO_UT_FRAME *p, ULONG ulCount)
@@ -48,28 +85,20 @@ static void _UT_TestFunName(ZOO_UT_FRAME *p, ULONG ulCount)
 	ULONG i;
 	for (i = 0; i < ulCount ;i++)
 	{
-		if (p->strFunName == NULL)
+		if (p[i].strFunName == NULL)
 		{
-			p->strFunName = "_zoo_unknow_name";
+			p[i].strFunName = "_zoo_unknow_name";
 		}
 	}
 }
 
 static ULONG _UT_TestCall(PVOID func, ULONG argc, PVOID *pParamArray)
 {
-	ULONG ulRet = 0;
-	switch (argc)
+	if (argc > 20)
 	{
-	case 1:
-		ulRet = _UT_TestCall0(func);
-		break;
-	case 2:
-		break;
-	default:
-		ulRet = -1;
-		break;
+		return -1;
 	}
-	return ulRet;
+	return g_UtCallArray[argc](func, pParamArray);
 }
 
 NTSTATUS UT_Init()
@@ -79,7 +108,8 @@ NTSTATUS UT_Init()
 
 NTSTATUS UT_Start()
 {
-	ULONG ulCount = sizeof(g_ZooUtFrame) / sizeof(g_ZooUtFrame[0]);
+	ULONG ulCount = g_ulCount;
+	ZOO_UT_FRAME *utArray = g_ZooUtFrame;
 	ULONG i;
 	ZOO_UT_FRAME *p;
 	ULONG ulRet;
@@ -89,7 +119,7 @@ NTSTATUS UT_Start()
 
 	for (i = 0; i < ulCount ;i++)
 	{
-		p = &g_ZooUtFrame[i];
+		p = &utArray[i];
 		if (p->func == NULL)
 		{
 			continue;
@@ -152,9 +182,189 @@ NTSTATUS RunUT()
 	return status;
 }
 
-static ULONG _UT_TestCall0(PVOID func)
+static ULONG _UT_TestCall0(PVOID func, PVOID *pParamArray)
 {
-	typedef ULONG (__stdcall *FPFunction0)(void);
+	typedef ULONG (*FPFunction0)(void);
 	FPFunction0 pfpFunction = (FPFunction0)func;
 	return pfpFunction();
+}
+
+static ULONG _UT_TestCall1(PVOID func, PVOID *pParamArray)
+{
+	typedef ULONG (*FPFunction0)(PVOID);
+	FPFunction0 pfpFunction = (FPFunction0)func;
+	return pfpFunction( pParamArray[0]);
+}
+
+static ULONG _UT_TestCall2(PVOID func, PVOID *pParamArray)
+{
+	typedef ULONG (*FPFunction0)(PVOID,PVOID);
+	FPFunction0 pfpFunction = (FPFunction0)func;
+	return pfpFunction( pParamArray[0], pParamArray[1]);
+}
+
+static ULONG _UT_TestCall3(PVOID func, PVOID *pParamArray)
+{
+	typedef ULONG (*FPFunction0)(PVOID,PVOID,PVOID);
+	FPFunction0 pfpFunction = (FPFunction0)func;
+	return pfpFunction( pParamArray[0], pParamArray[1], pParamArray[2]);
+}
+
+static ULONG _UT_TestCall4(PVOID func, PVOID *pParamArray)
+{
+	typedef ULONG (*FPFunction0)(PVOID,PVOID,PVOID,PVOID);
+	FPFunction0 pfpFunction = (FPFunction0)func;
+	return pfpFunction( pParamArray[0], pParamArray[1], pParamArray[2], pParamArray[3]);
+}
+
+static ULONG _UT_TestCall5(PVOID func, PVOID *pParamArray)
+{
+	typedef ULONG (*FPFunction0)(PVOID,PVOID,PVOID,PVOID,PVOID);
+	FPFunction0 pfpFunction = (FPFunction0)func;
+	return pfpFunction( pParamArray[0], pParamArray[1], pParamArray[2], pParamArray[3], pParamArray[4]);
+}
+
+static ULONG _UT_TestCall6(PVOID func, PVOID *pParamArray)
+{
+	typedef ULONG (*FPFunction0)(PVOID,PVOID,PVOID,PVOID,PVOID,PVOID);
+	FPFunction0 pfpFunction = (FPFunction0)func;
+	return pfpFunction( pParamArray[0], pParamArray[1], pParamArray[2], pParamArray[3], pParamArray[4],
+		pParamArray[5]);
+}
+
+static ULONG _UT_TestCall7(PVOID func, PVOID *pParamArray)
+{
+	typedef ULONG (*FPFunction0)(PVOID,PVOID,PVOID,PVOID,PVOID,PVOID,PVOID);
+	FPFunction0 pfpFunction = (FPFunction0)func;
+	return pfpFunction( pParamArray[0], pParamArray[1], pParamArray[2], pParamArray[3], pParamArray[4],
+		pParamArray[5], pParamArray[6]);
+}
+
+static ULONG _UT_TestCall8(PVOID func, PVOID *pParamArray)
+{
+	typedef ULONG (*FPFunction0)(PVOID,PVOID,PVOID,PVOID,PVOID,PVOID,PVOID,PVOID);
+	FPFunction0 pfpFunction = (FPFunction0)func;
+	return pfpFunction( pParamArray[0], pParamArray[1], pParamArray[2], pParamArray[3], pParamArray[4],
+		pParamArray[5], pParamArray[6], pParamArray[7]);
+}
+
+static ULONG _UT_TestCall9(PVOID func, PVOID *pParamArray)
+{
+	typedef ULONG (*FPFunction0)(PVOID,PVOID,PVOID,PVOID,PVOID,PVOID,PVOID,PVOID,PVOID);
+	FPFunction0 pfpFunction = (FPFunction0)func;
+	return pfpFunction( pParamArray[0], pParamArray[1], pParamArray[2], pParamArray[3], pParamArray[4],
+		pParamArray[5], pParamArray[6], pParamArray[7], pParamArray[8]);
+}
+
+static ULONG _UT_TestCall10(PVOID func, PVOID *pParamArray)
+{
+	typedef ULONG (*FPFunction0)(PVOID,PVOID,PVOID,PVOID,PVOID,PVOID,PVOID,PVOID,PVOID,PVOID);
+	FPFunction0 pfpFunction = (FPFunction0)func;
+	return pfpFunction( pParamArray[0], pParamArray[1], pParamArray[2], pParamArray[3], pParamArray[4],
+		pParamArray[5], pParamArray[6], pParamArray[7], pParamArray[8], pParamArray[9]);
+}
+
+static ULONG _UT_TestCall11(PVOID func, PVOID *pParamArray)
+{
+	typedef ULONG (*FPFunction0)(PVOID,PVOID,PVOID,PVOID,PVOID,PVOID,PVOID,PVOID,PVOID,PVOID,
+		PVOID);
+	FPFunction0 pfpFunction = (FPFunction0)func;
+	return pfpFunction( pParamArray[0], pParamArray[1], pParamArray[2], pParamArray[3], pParamArray[4],
+		pParamArray[5], pParamArray[6], pParamArray[7], pParamArray[8], pParamArray[9],
+		pParamArray[10]);
+}
+
+static ULONG _UT_TestCall12(PVOID func, PVOID *pParamArray)
+{
+	typedef ULONG (*FPFunction0)(PVOID,PVOID,PVOID,PVOID,PVOID,PVOID,PVOID,PVOID,PVOID,PVOID,
+		PVOID,PVOID);
+	FPFunction0 pfpFunction = (FPFunction0)func;
+	return pfpFunction( pParamArray[0], pParamArray[1], pParamArray[2], pParamArray[3], pParamArray[4],
+		pParamArray[5], pParamArray[6], pParamArray[7], pParamArray[8], pParamArray[9],
+		pParamArray[10],pParamArray[11]);
+}
+
+static ULONG _UT_TestCall13(PVOID func, PVOID *pParamArray)
+{
+	typedef ULONG (*FPFunction0)(PVOID,PVOID,PVOID,PVOID,PVOID,PVOID,PVOID,PVOID,PVOID,PVOID,
+		PVOID,PVOID,PVOID);
+	FPFunction0 pfpFunction = (FPFunction0)func;
+	return pfpFunction( pParamArray[0], pParamArray[1], pParamArray[2], pParamArray[3], pParamArray[4],
+		pParamArray[5], pParamArray[6], pParamArray[7], pParamArray[8], pParamArray[9],
+		pParamArray[10],pParamArray[11],pParamArray[12]);
+}
+
+static ULONG _UT_TestCall14(PVOID func, PVOID *pParamArray)
+{
+	typedef ULONG (*FPFunction0)(PVOID,PVOID,PVOID,PVOID,PVOID,PVOID,PVOID,PVOID,PVOID,PVOID,
+		PVOID,PVOID,PVOID,PVOID);
+	FPFunction0 pfpFunction = (FPFunction0)func;
+	return pfpFunction( pParamArray[0], pParamArray[1], pParamArray[2], pParamArray[3], pParamArray[4],
+		pParamArray[5], pParamArray[6], pParamArray[7], pParamArray[8], pParamArray[9],
+		pParamArray[10],pParamArray[11],pParamArray[12],pParamArray[13]);
+}
+
+static ULONG _UT_TestCall15(PVOID func, PVOID *pParamArray)
+{
+	typedef ULONG (*FPFunction0)(PVOID,PVOID,PVOID,PVOID,PVOID,PVOID,PVOID,PVOID,PVOID,PVOID,
+		PVOID,PVOID,PVOID,PVOID,PVOID);
+	FPFunction0 pfpFunction = (FPFunction0)func;
+	return pfpFunction( pParamArray[0], pParamArray[1], pParamArray[2], pParamArray[3], pParamArray[4],
+		pParamArray[5], pParamArray[6], pParamArray[7], pParamArray[8], pParamArray[9],
+		pParamArray[10],pParamArray[11],pParamArray[12],pParamArray[13],pParamArray[14]);
+}
+
+static ULONG _UT_TestCall16(PVOID func, PVOID *pParamArray)
+{
+	typedef ULONG (*FPFunction0)(PVOID,PVOID,PVOID,PVOID,PVOID,PVOID,PVOID,PVOID,PVOID,PVOID,
+		PVOID,PVOID,PVOID,PVOID,PVOID,PVOID);
+	FPFunction0 pfpFunction = (FPFunction0)func;
+	return pfpFunction( pParamArray[0], pParamArray[1], pParamArray[2], pParamArray[3], pParamArray[4],
+		pParamArray[5], pParamArray[6], pParamArray[7], pParamArray[8], pParamArray[9],
+		pParamArray[10],pParamArray[11],pParamArray[12],pParamArray[13],pParamArray[14],
+		pParamArray[15]);
+}
+
+static ULONG _UT_TestCall17(PVOID func, PVOID *pParamArray)
+{
+	typedef ULONG (*FPFunction0)(PVOID,PVOID,PVOID,PVOID,PVOID,PVOID,PVOID,PVOID,PVOID,PVOID,
+		PVOID,PVOID,PVOID,PVOID,PVOID,PVOID,PVOID);
+	FPFunction0 pfpFunction = (FPFunction0)func;
+	return pfpFunction( pParamArray[0], pParamArray[1], pParamArray[2], pParamArray[3], pParamArray[4],
+		pParamArray[5], pParamArray[6], pParamArray[7], pParamArray[8], pParamArray[9],
+		pParamArray[10],pParamArray[11],pParamArray[12],pParamArray[13],pParamArray[14],
+		pParamArray[15],pParamArray[16]);
+}
+
+static ULONG _UT_TestCall18(PVOID func, PVOID *pParamArray)
+{
+	typedef ULONG (*FPFunction0)(PVOID,PVOID,PVOID,PVOID,PVOID,PVOID,PVOID,PVOID,PVOID,PVOID,
+		PVOID,PVOID,PVOID,PVOID,PVOID,PVOID,PVOID,PVOID);
+	FPFunction0 pfpFunction = (FPFunction0)func;
+	return pfpFunction( pParamArray[0], pParamArray[1], pParamArray[2], pParamArray[3], pParamArray[4],
+		pParamArray[5], pParamArray[6], pParamArray[7], pParamArray[8], pParamArray[9],
+		pParamArray[10],pParamArray[11],pParamArray[12],pParamArray[13],pParamArray[14],
+		pParamArray[15],pParamArray[16],pParamArray[17]);
+}
+
+static ULONG _UT_TestCall19(PVOID func, PVOID *pParamArray)
+{
+	typedef ULONG (*FPFunction0)(PVOID,PVOID,PVOID,PVOID,PVOID,PVOID,PVOID,PVOID,PVOID,PVOID,
+		PVOID,PVOID,PVOID,PVOID,PVOID,PVOID,PVOID,PVOID,PVOID);
+	FPFunction0 pfpFunction = (FPFunction0)func;
+	return pfpFunction( pParamArray[0], pParamArray[1], pParamArray[2], pParamArray[3], pParamArray[4],
+		pParamArray[5], pParamArray[6], pParamArray[7], pParamArray[8], pParamArray[9],
+		pParamArray[10],pParamArray[11],pParamArray[12],pParamArray[13],pParamArray[14],
+		pParamArray[15],pParamArray[16],pParamArray[17],pParamArray[18]);
+}
+
+static ULONG _UT_TestCall20(PVOID func, PVOID *pParamArray)
+{
+	typedef ULONG (*FPFunction0)(PVOID,PVOID,PVOID,PVOID,PVOID,PVOID,PVOID,PVOID,PVOID,PVOID,
+		PVOID,PVOID,PVOID,PVOID,PVOID,PVOID,PVOID,PVOID,PVOID,PVOID);
+	FPFunction0 pfpFunction = (FPFunction0)func;
+	return pfpFunction( pParamArray[0], pParamArray[1], pParamArray[2], pParamArray[3], pParamArray[4],
+		pParamArray[5], pParamArray[6], pParamArray[7], pParamArray[8], pParamArray[9],
+		pParamArray[10],pParamArray[11],pParamArray[12],pParamArray[13],pParamArray[14],
+		pParamArray[15],pParamArray[16],pParamArray[17],pParamArray[18],pParamArray[19]);
 }

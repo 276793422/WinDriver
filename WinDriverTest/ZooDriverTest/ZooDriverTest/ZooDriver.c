@@ -81,6 +81,7 @@ NTSTATUS DriverEntry(IN PDRIVER_OBJECT DriverObject, IN PUNICODE_STRING  Registr
 
 	ZooLogV("驱动加载成功 \n");
 
+	RunUT();
 
 	return STATUS_SUCCESS;
 }

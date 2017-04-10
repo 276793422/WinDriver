@@ -3,7 +3,9 @@ TARGETTYPE=DRIVER
 
 NO_SAFESEH = 1
 
-INCLUDES		=
+INCLUDES		=	.
 
-SOURCES			=	ZooDriver.c
+SOURCES			=	ZooDriver.c	\
+					unit_test.c	\
+					demo_ut.c
         
