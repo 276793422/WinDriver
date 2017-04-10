@@ -1,0 +1,9 @@
+TARGETNAME=ZooDriver
+TARGETTYPE=DRIVER
+
+NO_SAFESEH = 1
+
+INCLUDES		=
+
+SOURCES			=	ZooDriver.c
+        

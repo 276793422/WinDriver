@@ -1,0 +1,26 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 10.00
+# Visual Studio 2008
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ZooDriverTest", "ZooDriverTest\ZooDriverTest.vcproj", "{2D31C0B5-BB6E-4FA8-8A87-E9F968F3B213}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ZooDriverTest-R3", "ZooDriverTest-R3\ZooDriverTest-R3.vcproj", "{97ACC146-7E7E-4BBB-8580-36BF65DE5B07}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Win32 = Debug|Win32
+		Release|Win32 = Release|Win32
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{2D31C0B5-BB6E-4FA8-8A87-E9F968F3B213}.Debug|Win32.ActiveCfg = Debug|Win32
+		{2D31C0B5-BB6E-4FA8-8A87-E9F968F3B213}.Debug|Win32.Build.0 = Debug|Win32
+		{2D31C0B5-BB6E-4FA8-8A87-E9F968F3B213}.Release|Win32.ActiveCfg = Release|Win32
+		{2D31C0B5-BB6E-4FA8-8A87-E9F968F3B213}.Release|Win32.Build.0 = Release|Win32
+		{97ACC146-7E7E-4BBB-8580-36BF65DE5B07}.Debug|Win32.ActiveCfg = Debug|Win32
+		{97ACC146-7E7E-4BBB-8580-36BF65DE5B07}.Debug|Win32.Build.0 = Debug|Win32
+		{97ACC146-7E7E-4BBB-8580-36BF65DE5B07}.Release|Win32.ActiveCfg = Release|Win32
+		{97ACC146-7E7E-4BBB-8580-36BF65DE5B07}.Release|Win32.Build.0 = Release|Win32
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal
