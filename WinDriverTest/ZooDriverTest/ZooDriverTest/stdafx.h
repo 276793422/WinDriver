@@ -12,6 +12,4 @@
 #define VT_DEVICE_NAME		L"\\Device\\ZooDriver"
 #define VT_SYBLINK_NAME		L"\\DosDevices\\ZooDriver"
 
-#include "avltable.h"
-
 #include "unit_test.h"
