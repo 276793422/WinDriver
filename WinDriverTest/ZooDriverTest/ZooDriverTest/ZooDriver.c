@@ -1,20 +1,12 @@
 #include "stdafx.h"
 
-void ZooDriverUnload(IN PDRIVER_OBJECT DriverObject);
-NTSTATUS ZooDriverDispatchDefaultHandler(IN PDEVICE_OBJECT DeviceObject, IN PIRP Irp);
-
-
-NTSTATUS DriverEntry(IN PDRIVER_OBJECT DriverObject, IN PUNICODE_STRING  RegistryPath)
+NTSTATUS CreateDeviceSyblnk(IN PDRIVER_OBJECT DriverObject, IN PUNICODE_STRING  RegistryPath)
 {
 	UNICODE_STRING DeviceName;
 	UNICODE_STRING SybLinkName;
 	PDEVICE_OBJECT DeviceObject = NULL;
 	NTSTATUS status;
 	ULONG i;
-
-
-	ZooLogV("进入 DriverEntry : %wZ \n", RegistryPath);
-
 	RtlInitUnicodeString(&DeviceName, VT_DEVICE_NAME);
 	RtlInitUnicodeString(&SybLinkName, VT_SYBLINK_NAME);
 
@@ -22,11 +14,12 @@ NTSTATUS DriverEntry(IN PDRIVER_OBJECT DriverObject, IN PUNICODE_STRING  Registr
 	{
 		DriverObject->MajorFunction[i] = ZooDriverDispatchDefaultHandler;
 	}
-	
+
 	DriverObject->DriverUnload = ZooDriverUnload;
 	status = IoCreateDevice(DriverObject, 0, &DeviceName, FILE_DEVICE_UNKNOWN, 0, FALSE, &DeviceObject);
 	if (!NT_SUCCESS(status))
 	{
+		ZooLogV("驱动加载失败: Device 失败 \n");
 		return status;
 	}
 	if (!DeviceObject)
@@ -37,17 +30,25 @@ NTSTATUS DriverEntry(IN PDRIVER_OBJECT DriverObject, IN PUNICODE_STRING  Registr
 	DeviceObject->Flags |= DO_BUFFERED_IO;
 	DeviceObject->AlignmentRequirement = FILE_WORD_ALIGNMENT;
 	status = IoCreateSymbolicLink(&SybLinkName, &DeviceName);
-
-	ZooLogV("驱动加载成功 \n");
-	return STATUS_SUCCESS;
+	if (!NT_SUCCESS(status))
+	{
+		IoDeleteDevice(DriverObject->DeviceObject);
+		ZooLogV("驱动加载失败: Syblnk 失败 \n");
+		return status;
+	}
 }
 
-void ZooDriverUnload(IN PDRIVER_OBJECT DriverObject)
+void DeleteDeviceSyblnk(IN PDRIVER_OBJECT DriverObject)
 {
 	UNICODE_STRING SybLinkName;
 	RtlInitUnicodeString(&SybLinkName, VT_SYBLINK_NAME);
 	IoDeleteSymbolicLink(&SybLinkName);
 	IoDeleteDevice(DriverObject->DeviceObject);
+}
+
+void ZooDriverUnload(IN PDRIVER_OBJECT DriverObject)
+{
+	DeleteDeviceSyblnk(DriverObject);
 	ZooLogV("驱动卸载成功 \n");
 }
 
@@ -59,3 +60,21 @@ NTSTATUS ZooDriverDispatchDefaultHandler(IN PDEVICE_OBJECT DeviceObject, IN PIRP
 	ZooLogV("Function %s() \n", __FUNCTION__);
 	return Irp->IoStatus.Status;
 }
+
+NTSTATUS DriverEntry(IN PDRIVER_OBJECT DriverObject, IN PUNICODE_STRING  RegistryPath)
+{
+	NTSTATUS status;
+
+	ZooLogV("进入 DriverEntry : %wZ \n", RegistryPath);
+
+	status = CreateDeviceSyblnk(DriverObject, RegistryPath);
+	if (!NT_SUCCESS(status))
+	{
+		ZooLogV("驱动加载失败\n");
+		return status;
+	}
+
+	ZooLogV("驱动加载成功 \n");
+	return STATUS_SUCCESS;
+}
+
