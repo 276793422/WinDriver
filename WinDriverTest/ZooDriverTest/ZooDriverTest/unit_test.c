@@ -2,8 +2,39 @@
 #include "unit_test.h"
 
 extern ZOO_UT_FRAME g_ZooUtFrame[];
-extern ULONG g_ulCount;
+extern ULONG g_ulUtFrameCount;
 
+extern FZooUtFunc g_ZooUtInit[];
+extern ULONG g_ulUtInitCount;
+
+extern FZooUtFunc g_ZooUtUnInit[];
+extern ULONG g_ulUtUninitCount;
+
+//////////////////////////////////////////////////////////////////////////
+//			此处代码为备用代码
+//	如果有那种超级变态的人，有那种超级变态的用法，
+//	比如，测试5000个函数，每个函数都是20个参数，
+//	这么办的话，全局大数组很不雅，
+//	这时候就需要有个初始化列表来初始化全局指针，
+//	然后ExAllocatePoolWithTag什么什么的来申请内存做参数，
+//	Init函数可以申请内存，Uninit函数释放内存，
+//	当然了，这里最好还是一辈子都用不上。
+
+//	UT 初始化函数列表，可以不用
+FZooUtFunc g_ZooUtInit[] =
+{
+	NULL
+};
+ULONG g_ulUtInitCount = sizeof(g_ZooUtInit) / sizeof(g_ZooUtInit[0]);
+
+//	UT 反初始化函数列表，可以不用
+FZooUtFunc g_ZooUtUnInit[] =
+{
+	NULL
+};
+ULONG g_ulUtUninitCount = sizeof(g_ZooUtUnInit) / sizeof(g_ZooUtUnInit[0]);
+
+//////////////////////////////////////////////////////////////////////////
 
 static ULONG _UT_TestCall0(PVOID func, PVOID *pParamArray);
 static ULONG _UT_TestCall1(PVOID func, PVOID *pParamArray);
@@ -62,18 +93,18 @@ static void _UT_TestParam(ZOO_UT_FRAME *p, ULONG ulCount)
 	{
 		if (p->argc > 20)
 		{
-			ZooLogUT("Index %d ，函数 %s() ，参数个数异常 : %d \n", i, p->strFunName, p->argc);
+			ZooLogUTFrame("Index %d ，函数 %s() ，参数个数异常 : %d \n", i, p->strFunName, p->argc);
 			g_ZooUtFrame[i].func = NULL;
 			continue;
 		}
 		if (p->argc != 0 && p->pParamArray == NULL)
 		{
-			ZooLogUT("Index %d ，函数 %s() ，参数列表异常 : 0x%08X \n", i, p->strFunName, p->pParamArray);
+			ZooLogUTFrame("Index %d ，函数 %s() ，参数列表异常 : 0x%08X \n", i, p->strFunName, p->pParamArray);
 			g_ZooUtFrame[i].func = NULL;
 		}
 		else if (p->argc == 0 && p->pParamArray != NULL)
 		{
-			ZooLogUT("Index %d ，函数 %s() ，参数列表异常 : 0x%08X \n", i, p->strFunName, p->pParamArray);
+			ZooLogUTFrame("Index %d ，函数 %s() ，参数列表异常 : 0x%08X \n", i, p->strFunName, p->pParamArray);
 			g_ZooUtFrame[i].func = NULL;
 		}
 	}
@@ -101,14 +132,25 @@ static ULONG _UT_TestCall(PVOID func, ULONG argc, PVOID *pParamArray)
 	return g_UtCallArray[argc](func, pParamArray);
 }
 
-NTSTATUS UT_Init()
+static NTSTATUS UT_Init()
 {
+	ULONG ulIndex;
+	if (g_ZooUtInit)
+	{
+		for (ulIndex = 0; ulIndex < g_ulUtInitCount; ulIndex++)
+		{
+			if (g_ZooUtInit[ulIndex])
+			{
+				g_ZooUtInit[ulIndex]();
+			}
+		}
+	}
 	return STATUS_SUCCESS;
 }
 
-NTSTATUS UT_Start()
+static NTSTATUS UT_Start()
 {
-	ULONG ulCount = g_ulCount;
+	ULONG ulCount = g_ulUtFrameCount;
 	ZOO_UT_FRAME *utArray = g_ZooUtFrame;
 	ULONG i;
 	ZOO_UT_FRAME *p;
@@ -129,19 +171,30 @@ NTSTATUS UT_Start()
 
 		if (ulRet == p->expect)
 		{
-			ZooLogUT("UT Success : fun = %s , argc = %d , index = %d \n", p->strFunName, p->argc, i);
+			ZooLogUTFrame("UT Success : fun = %s , argc = %d , index = %d \n", p->strFunName, p->argc, i);
 		}
 		else
 		{
-			ZooLogUT("UT Error : fun = %s , argc = %d , return = %u, expect = %u, index = %d\n", p->strFunName, p->argc, ulRet, p->expect, i);
+			ZooLogUTFrame("UT Error : fun = %s , argc = %d , return = %u, expect = %u, index = %d\n", p->strFunName, p->argc, ulRet, p->expect, i);
 		}
 	}
 
 	return STATUS_SUCCESS;
 }
 
-NTSTATUS UT_Uninit()
+static NTSTATUS UT_Uninit()
 {
+	ULONG ulIndex;
+	if (g_ZooUtUnInit)
+	{
+		for (ulIndex = 0; ulIndex < g_ulUtUninitCount; ulIndex++)
+		{
+			if (g_ZooUtUnInit[ulIndex])
+			{
+				g_ZooUtUnInit[ulIndex]();
+			}
+		}
+	}
 	return STATUS_SUCCESS;
 }
 
@@ -151,32 +204,32 @@ NTSTATUS RunUT()
 	status = UT_Init();
 	if (!NT_SUCCESS(status))
 	{
-		ZooLogV("UT 框架初始化失败\n");
+		ZooLogUTFrame("UT 框架初始化失败\n");
 		return status;
 	}
 	else
 	{
-		ZooLogV("UT 框架初始化成功\n");
+		ZooLogUTFrame("UT 框架初始化成功\n");
 	}
 
 	status = UT_Start();
 	if (!NT_SUCCESS(status))
 	{
-		ZooLogV("UT 框架启动失败\n");
+		ZooLogUTFrame("UT 框架启动失败\n");
 	}
 	else
 	{
-		ZooLogV("UT 框架启动成功\n");
+		ZooLogUTFrame("UT 框架启动成功\n");
 	}
 
 	status = UT_Uninit();
 	if (!NT_SUCCESS(status))
 	{
-		ZooLogV("UT 框架销毁失败\n");
+		ZooLogUTFrame("UT 框架销毁失败\n");
 	}
 	else
 	{
-		ZooLogV("UT 框架销毁成功\n");
+		ZooLogUTFrame("UT 框架销毁成功\n");
 	}
 
 	return status;

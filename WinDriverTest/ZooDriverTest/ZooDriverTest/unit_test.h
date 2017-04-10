@@ -14,4 +14,7 @@ typedef struct _ZOO_UT_FRAME
 	PCHAR strFunName;		//	函数名字，或者叫做函数的唯一标识，这个可以空，但是空了就无法在log里面分辨函数了
 }ZOO_UT_FRAME;
 
+typedef void (*FZooUtFunc)(void);
+
 NTSTATUS RunUT();
+
