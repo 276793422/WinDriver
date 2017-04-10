@@ -1,5 +1,10 @@
 #include "stdafx.h"
 
+
+void ZooDriverUnload(IN PDRIVER_OBJECT DriverObject);
+
+NTSTATUS ZooDriverDispatchDefaultHandler(IN PDEVICE_OBJECT DeviceObject, IN PIRP Irp);
+
 NTSTATUS CreateDeviceSyblnk(IN PDRIVER_OBJECT DriverObject, IN PUNICODE_STRING  RegistryPath)
 {
 	UNICODE_STRING DeviceName;
@@ -46,12 +51,6 @@ void DeleteDeviceSyblnk(IN PDRIVER_OBJECT DriverObject)
 	IoDeleteDevice(DriverObject->DeviceObject);
 }
 
-void ZooDriverUnload(IN PDRIVER_OBJECT DriverObject)
-{
-	DeleteDeviceSyblnk(DriverObject);
-	ZooLogV("驱动卸载成功 \n");
-}
-
 NTSTATUS ZooDriverDispatchDefaultHandler(IN PDEVICE_OBJECT DeviceObject, IN PIRP Irp)
 {
 	Irp->IoStatus.Status = STATUS_NOT_SUPPORTED;
@@ -59,6 +58,12 @@ NTSTATUS ZooDriverDispatchDefaultHandler(IN PDEVICE_OBJECT DeviceObject, IN PIRP
 	IoCompleteRequest(Irp, IO_NO_INCREMENT);
 	ZooLogV("Function %s() \n", __FUNCTION__);
 	return Irp->IoStatus.Status;
+}
+
+void ZooDriverUnload(IN PDRIVER_OBJECT DriverObject)
+{
+	DeleteDeviceSyblnk(DriverObject);
+	ZooLogV("驱动卸载成功 \n");
 }
 
 NTSTATUS DriverEntry(IN PDRIVER_OBJECT DriverObject, IN PUNICODE_STRING  RegistryPath)
@@ -75,6 +80,7 @@ NTSTATUS DriverEntry(IN PDRIVER_OBJECT DriverObject, IN PUNICODE_STRING  Registr
 	}
 
 	ZooLogV("驱动加载成功 \n");
+
+
 	return STATUS_SUCCESS;
 }
-
