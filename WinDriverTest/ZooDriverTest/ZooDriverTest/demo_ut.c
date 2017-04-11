@@ -9,12 +9,10 @@ void UT_Init();
 
 void UT_Uninit();
 
-ZOO_UT_FRAME g_ZooUtFrame[] = 
-{
-	{STATUS_SUCCESS, 0, UT_Param0, NULL, "UT_Param0"},
-	{STATUS_SUCCESS, 5, UT_Param5, pParam5, "UT_Param5"}
-};
-ULONG g_ulUtFrameCount = sizeof(g_ZooUtFrame) / sizeof(g_ZooUtFrame[0]);
+UT_FRAME_MAPPING_BEGIN
+	UT_FRAME_MAPPING_MEMBER(STATUS_SUCCESS, 0, UT_Param0, NULL, "UT_Param0")
+	UT_FRAME_MAPPING_MEMBER(STATUS_SUCCESS, 5, UT_Param5, pParam5, "UT_Param5")
+UT_FRAME_MAPPING_END
 
 
 NTSTATUS UT_Param0()

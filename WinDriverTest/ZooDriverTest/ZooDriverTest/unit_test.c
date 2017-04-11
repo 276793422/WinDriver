@@ -21,18 +21,14 @@ extern ULONG g_ulUtUninitCount;
 //	当然了，这里最好还是一辈子都用不上。
 
 //	UT 初始化函数列表，可以不用
-FZooUtFunc g_ZooUtInit[] =
-{
-	NULL
-};
-ULONG g_ulUtInitCount = sizeof(g_ZooUtInit) / sizeof(g_ZooUtInit[0]);
+UT_FRAME_INIT_BEGIN
+	UT_FRAME_INIT_MEMBER(NULL)
+UT_FRAME_INIT_END
 
 //	UT 反初始化函数列表，可以不用
-FZooUtFunc g_ZooUtUnInit[] =
-{
-	NULL
-};
-ULONG g_ulUtUninitCount = sizeof(g_ZooUtUnInit) / sizeof(g_ZooUtUnInit[0]);
+UT_FRAME_UNINIT_BEGIN
+	UT_FRAME_UNINIT_MEMBER(NULL)
+UT_FRAME_UNINIT_END
 
 //////////////////////////////////////////////////////////////////////////
 
