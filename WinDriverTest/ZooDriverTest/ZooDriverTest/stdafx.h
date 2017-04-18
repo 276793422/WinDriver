@@ -8,6 +8,7 @@
 #define ZooLogV(...) {{KdPrint(("[ZooDriver] " __VA_ARGS__));}}
 #define ZooLogUT(...) {{KdPrint(("[ZooDriverUT] " __VA_ARGS__));}}
 #define ZooLogUTFrame(...) {{KdPrint(("[ZooLogUTFrame] " __VA_ARGS__));}}
+#define ZooLogDebug(...) {{KdPrint(("[ZooDriverDebug] " __VA_ARGS__));}}
 
 
 #define VT_DEVICE_NAME		L"\\Device\\ZooDriver"

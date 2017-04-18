@@ -109,6 +109,22 @@
 				>
 			</File>
 		</Filter>
+		<Filter
+			Name="AvlTable"
+			>
+			<File
+				RelativePath=".\avltable.c"
+				>
+			</File>
+			<File
+				RelativePath=".\avltable.h"
+				>
+			</File>
+			<File
+				RelativePath=".\avltable_ut.c"
+				>
+			</File>
+		</Filter>
 	</Files>
 	<Globals>
 	</Globals>

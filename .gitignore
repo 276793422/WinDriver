@@ -36,3 +36,5 @@
 *.exp
 *.ncb
 *.suo
+*.xml
+*.user
